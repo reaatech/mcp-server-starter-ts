@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # MCP Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - LOG_LEVEL=debug
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=mcp-server-starter-ts
+    depends_on:
+      - otel-collector
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:0.104.0
+    command:
+      - "--config=/etc/otel-collector-config.yaml"
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "8888:8888"   # Metrics
+    volumes:
+      - ./docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    depends_on:
+      - jaeger
+      - prometheus
+
+  # Jaeger (tracing)
+  jaeger:
+    image: jaegertracing/all-in-one:1.58
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4317:4317"    # OTLP gRPC (if not using collector)
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+  # Prometheus (metrics)
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+
+# Named volumes (if needed)
+volumes:
+  prometheus_data:
