@@ -1,0 +1,11 @@
+# Code owners for mcp-server-starter-ts
+# https://help.github.com/articles/about-codeowners/
+
+# Default owners for all files
+* @maintainers
+
+# Specific path owners
+/src/ @maintainers @core-devs
+/tests/ @maintainers @core-devs
+/infra/ @infra-team
+/docs/ @maintainers
