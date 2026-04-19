@@ -1,0 +1,38 @@
+# agent.yaml — Self-describing agent metadata for orchestrator registration
+#
+# Copy this file to agent.yaml and update the values for your agent.
+# Then register with your orchestrator (e.g., ask-gm/orchestrator-core).
+#
+# This file follows the same schema as ask-gm/agent-registry/schema.json
+
+agent_id: "my-mcp-agent"
+display_name: "My MCP Agent"
+
+description: >-
+  A production-grade MCP agent built with mcp-server-starter-ts.
+  Handles general-purpose tasks and demonstrates the template's
+  capabilities including dual transports, observability, and security.
+
+endpoint: "${MCP_ENDPOINT:-http://localhost:8080}"
+type: mcp
+is_default: false
+confidence_threshold: 0.7
+clarification_required: false
+
+# User-facing description shown when the orchestrator asks for clarification
+# before routing to this agent. Keep it concise and action-oriented.
+clarification_context: >-
+  A general-purpose MCP agent that can echo messages and perform
+  other tasks via MCP tools.
+
+# Few-shot examples for the classifier — add real queries that should
+# route to this agent. The more examples, the better the routing accuracy.
+examples:
+  - "Can you echo this message back to me?"
+  - "Test the MCP connection"
+  - "Hello, are you there?"
+
+# List of skills this agent provides (maps to skills/*.md files)
+skills:
+  - echo
+  - health-check

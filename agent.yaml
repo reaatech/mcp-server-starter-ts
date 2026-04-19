@@ -1,0 +1,28 @@
+# agent.yaml - Self-describing agent metadata for MCP server
+#
+# This file enables dynamic registration with orchestrators like ask-gm/orchestrator-core.
+# Copy this file to your orchestrator's agent registry directory.
+#
+agent_id: "mcp-server-starter-ts"
+display_name: "MCP Server Starter"
+description: >-
+  Production-grade MCP server template in TypeScript. Provides essential tools
+  (echo, health-check) and serves as a starting point for building custom MCP
+  servers with enterprise-grade observability, security, and reliability.
+endpoint: "${MCP_ENDPOINT:-http://localhost:8080}"
+type: mcp
+is_default: false
+confidence_threshold: 0.9
+clarification_required: false
+clarification_context: >-
+  The MCP server provides echo (for testing) and health-check (for monitoring)
+  tools. If you need functionality beyond these, consider building a custom MCP
+  server using this template.
+examples:
+  - "Test the MCP connection with an echo"
+  - "Check server health and uptime"
+  - "What tools are available on this MCP server?"
+  - "Verify the server is ready to handle requests"
+skills:
+  - echo
+  - health-check
