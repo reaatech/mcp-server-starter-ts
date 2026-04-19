@@ -1,0 +1,21 @@
+# AWS Terraform Variables
+# Copy this file to terraform.tfvars and update with your values.
+
+region          = "us-east-1"
+api_name        = "mcp-server-api"
+function_name   = "mcp-server"
+container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/mcp-server:latest"
+
+# Optional: plaintext environment variables
+# environment_variables = {
+#   NODE_ENV    = "production"
+#   LOG_LEVEL   = "info"
+#   CORS_ORIGIN = "*"
+# }
+
+# Optional: secrets to store in Secrets Manager (sensitive)
+# secret_values = {
+#   API_KEY = "your-secret-api-key"
+# }
+
+# create_secret = true

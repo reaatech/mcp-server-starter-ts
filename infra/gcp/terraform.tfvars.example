@@ -1,0 +1,25 @@
+# GCP Terraform Variables
+# Copy this file to terraform.tfvars and update with your values.
+
+project_id      = "your-gcp-project-id"
+region          = "us-central1"
+service_name    = "mcp-server"
+container_image = "gcr.io/your-gcp-project-id/mcp-server:latest"
+
+# Optional: plaintext environment variables
+# environment_variables = {
+#   NODE_ENV   = "production"
+#   LOG_LEVEL  = "info"
+#   CORS_ORIGIN = "*"
+# }
+
+# Optional: secret-backed environment variables
+# secret_environment_variables = [
+#   {
+#     name        = "API_KEY"
+#     secret_name = "mcp-server-api-key"
+#     key         = "latest"
+#   }
+# ]
+
+# allow_unauthenticated = false
