@@ -11,7 +11,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci && npm cache clean --force
 
 # Copy source code
-COPY tsconfig.json eslint.config.mjs .prettierrc ./
+COPY tsconfig.json ./
 COPY src ./src
 
 # Build

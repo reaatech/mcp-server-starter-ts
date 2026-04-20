@@ -10,7 +10,7 @@
  */
 
 import type { Express, Request, Response } from 'express';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHTTP.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { envConfig } from '../config/env.js';
 import { logger } from '../observability/logger.js';
