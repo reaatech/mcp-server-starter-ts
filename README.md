@@ -1,5 +1,6 @@
 # mcp-server-starter-ts
 
+[![SafeSkill 91/100](https://img.shields.io/badge/SafeSkill-91%2F100_Verified%20Safe-brightgreen)](https://safeskill.dev/scan/reaatech-mcp-server-starter-ts)
 **Production-grade MCP server template in TypeScript.**
 
 Built from lessons learned shipping MCP servers at Fortune-10 scale. This is "what I wish existed on day 1 of a Fortune-10 MCP build."
