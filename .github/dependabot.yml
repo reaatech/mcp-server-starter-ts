@@ -12,8 +12,6 @@ updates:
       include: "scope"
     open-pull-requests-limit: 10
     versioning-strategy: increase
-    allow:
-      - dependency-type: "all"
-        update-type: "version-update:semver-major"
-      - dependency-type: "all"
-        update-type: "version-update:semver-patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor"]
