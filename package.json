@@ -46,7 +46,7 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.52.1",
     "@opentelemetry/sdk-metrics": "^1.25.1",
     "@opentelemetry/sdk-node": "^0.52.1",
-    "@opentelemetry/sdk-trace-node": "^1.25.1",
+    "@opentelemetry/sdk-trace-node": "^2.7.0",
     "cors": "^2.8.5",
     "express": "^5.0.0",
     "helmet": "^7.1.0",
