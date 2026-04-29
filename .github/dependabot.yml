@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    allow:
+      - dependency-type: "all"
+        update-type: "version-update:semver-major"
+      - dependency-type: "all"
+        update-type: "version-update:semver-patch"
