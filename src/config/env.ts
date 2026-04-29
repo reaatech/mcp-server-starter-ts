@@ -7,14 +7,10 @@
 
 import { z } from 'zod';
 
-const positiveInt = (
-  name: string,
-  defaultValue: string
-): z.ZodType<number, z.ZodTypeDef, string | undefined> =>
-  z
-    .string()
-    .default(defaultValue)
-    .transform((val) => parseInt(val, 10))
+const positiveInt = (name: string, defaultValue: string): z.ZodType<number> =>
+  z.coerce
+    .number()
+    .default(parseInt(defaultValue, 10))
     .refine((val) => !Number.isNaN(val) && val > 0, {
       message: `${name} must be a positive number`,
     });
@@ -113,8 +109,11 @@ function loadEnvConfig(): EnvConfig {
   const parsed = envSchema.safeParse(process.env);
 
   if (!parsed.success) {
-    const errors = parsed.error.errors
-      .map((err) => `  - ${err.path.join('.')}: ${err.message}`)
+    const errors = parsed.error.issues
+      .map(
+        (err: { path: PropertyKey[]; message: string }) =>
+          `  - ${err.path.join('.')}: ${err.message}`
+      )
       .join('\n');
     throw new Error(`Environment validation failed:\n${errors}`);
   }

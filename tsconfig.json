@@ -31,10 +31,7 @@
     "noImplicitOverride": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist", "coverage"]
