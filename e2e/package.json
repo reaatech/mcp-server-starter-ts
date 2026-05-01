@@ -25,8 +25,10 @@
     "@reaatech/mcp-server-tools": "workspace:*"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
     "@types/node": "^25.6.0",
     "@types/supertest": "^7.2.0",
+    "express": "^5.1.0",
     "supertest": "^7.2.2",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
