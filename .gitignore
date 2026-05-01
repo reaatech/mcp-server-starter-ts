@@ -1,11 +1,23 @@
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
+.pnpm-store/
 
-# Build output
+# Build outputs
 dist/
 build/
+*.tsbuildinfo
+
+# Stray build artifacts inside src/ (tsup output belongs in dist/ only)
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
 
 # Environment
 .env
@@ -13,41 +25,21 @@ build/
 .env.*.local
 
 # IDE
-.idea/
 .vscode/
+.idea/
+.claude
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
-.AppleDouble
-.LSOverride
 
-# Coverage
+# Test
 coverage/
 
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Turborepo
+.turbo/
 
-# Testing
-.jest/
-
-# Terraform
-**/.terraform/
-**/*.tfstate
-**/*.tfstate.*
-**/crash.log
-**/.terraform.lock.hcl
-
-# Docker
-docker-compose.override.yml
-
-# Misc
-*.pem
-.cache/
+# Development
 DEV_PLAN.md
