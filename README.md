@@ -1,124 +1,121 @@
 # mcp-server-starter-ts
 
-**Production-grade MCP server template in TypeScript.**
+[![CI](https://github.com/reaatech/mcp-server-starter-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/reaatech/mcp-server-starter-ts/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 
-Built from lessons learned shipping MCP servers at Fortune-10 scale. This is "what I wish existed on day 1 of a Fortune-10 MCP build."
+> Production-grade [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server starter template in TypeScript. Built from Fortune-10 scale operational experience.
+
+This monorepo provides core types, a server framework, pluggable middleware, observability, and transport layer — everything needed to build, secure, and operate an MCP server from day one.
+
+## Features
+
+- **Core types & configuration** — Zod-validated environment config, shared domain types, content block helpers
+- **Server framework** — Express 5 with composable middleware pipeline (auth, rate limit, idempotency, sanitization)
+- **Pluggable auth** — API key and Bearer token validation with timing-safe comparison
+- **Tool system** — Type-safe `defineTool()` helper, auto-discovery of `.tool.ts` files, built-in `echo` and `health-check` tools
+- **Dual transports** — Streamable HTTP (primary) + SSE (legacy) with session management and automatic cleanup
+- **Observability** — Pino structured logging with PII redaction, OpenTelemetry tracing, Prometheus-compatible metrics
+- **Security middleware** — Rate limiting (token bucket), request idempotency, prompt-injection input sanitization
+
+## Installation
+
+### Using the packages
+
+Packages are published under the `@reaatech` scope and can be installed individually:
+
+```bash
+# Server framework (includes all middleware and transports)
+pnpm add @reaatech/mcp-server-server
+
+# Core types and configuration
+pnpm add @reaatech/mcp-server-core
+
+# Authentication middleware (standalone)
+pnpm add @reaatech/mcp-server-auth
+
+# Tool registry and built-in tools
+pnpm add @reaatech/mcp-server-tools
+
+# Observability (logging, tracing, metrics)
+pnpm add @reaatech/mcp-server-observability
+
+# Transport layer (standalone)
+pnpm add @reaatech/mcp-server-transport
+```
+
+### Contributing
+
+```bash
+# Clone the repository
+git clone https://github.com/reaatech/mcp-server-starter-ts.git
+cd mcp-server-starter-ts
+
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run the test suite
+pnpm test
+
+# Run linting
+pnpm lint
+```
 
 ## Quick Start
 
+Create a minimal MCP server with built-in tools in under 10 lines:
+
+```typescript
+import { startServer } from '@reaatech/mcp-server-server';
+
+// Built-in echo and health-check tools are available
+// Auth, rate limiting, idempotency, and sanitization are configured
+// Streamable HTTP and SSE transports are mounted
+startServer();
+```
+
 ```bash
-# Clone the template
-git clone https://github.com/reaatech/mcp-server-starter-ts my-mcp-server
-cd my-mcp-server
-
-# Install dependencies
-npm install
-
-# Copy environment template
-cp .env.example .env
-
-# Start development server
-npm run dev
-
-# Test with curl
-curl http://localhost:8080/health
+PORT=8080 pnpm dev
 ```
 
-## What's Included
+See the [`examples/01-basic-server/`](./examples/01-basic-server/) for the complete working example.
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **MCP Protocol** | ✅ | Full MCP server using `@modelcontextprotocol/sdk` |
-| **Dual Transports** | ✅ | StreamableHTTP (primary) + SSE (legacy) |
-| **Tool System** | ✅ | Auto-discovered tools with Zod validation |
-| **Auth Middleware** | ✅ | API key / Bearer token validation |
-| **Rate Limiting** | ✅ | Token bucket algorithm, per-client |
-| **Idempotency** | ✅ | Request deduplication with TTL cache |
-| **Input Sanitization** | ✅ | Prompt-injection defense |
-| **Structured Logging** | ✅ | Pino with request_id correlation |
-| **Distributed Tracing** | ✅ | OpenTelemetry with OTLP export |
-| **Metrics** | ✅ | OTel counters, histograms, gauges |
-| **Docker** | ✅ | Multi-stage build, <50MB target |
-| **docker-compose** | ✅ | Local dev with Jaeger + Prometheus |
-| **CI/CD** | ✅ | GitHub Actions (lint, test, build, docker) |
-| **TypeScript** | ✅ | Strict mode, ESM, NodeNext |
+## Packages
 
-## Architecture
-
-```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   MCP Client    │────▶│  Express Server  │────▶│  Middleware     │
-│   (Claude, etc) │     │  (Transport)     │     │  Pipeline       │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-                                                        │
-                                                        ▼
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Observability  │◀────│   MCP Server     │◀────│  Tool Registry  │
-│  (OTel/Pino)    │     │   (Core)         │     │  (Auto-discover)│
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-```
+| Package | Description |
+| ------- | ----------- |
+| [`@reaatech/mcp-server-core`](./packages/core) | Core types, Zod schemas, configuration, and version utilities |
+| [`@reaatech/mcp-server-auth`](./packages/auth) | Pluggable authentication middleware |
+| [`@reaatech/mcp-server-observability`](./packages/observability) | Structured logging, OpenTelemetry tracing, and metrics |
+| [`@reaatech/mcp-server-transport`](./packages/transport) | MCP transport implementations (Streamable HTTP, SSE) |
+| [`@reaatech/mcp-server-tools`](./packages/tools) | Tool registry, discovery, and built-in tools |
+| [`@reaatech/mcp-server-server`](./packages/server) | MCP server framework (Express, middleware pipeline) |
 
 ## Tool Authoring
 
-Create a new tool in 30 seconds:
-
-1. **Create `src/tools/my-tool.tool.ts`:**
-
 ```typescript
+import { defineTool } from '@reaatech/mcp-server-tools';
 import { z } from 'zod';
-import { defineTool } from './index.js';
-import { textContent } from '../types/domain.js';
+import { textContent } from '@reaatech/mcp-server-core';
 
 export default defineTool({
   name: 'my-tool',
   description: 'Does something useful for the LLM',
   inputSchema: z.object({
-    param1: z.string().describe('First parameter'),
-    param2: z.number().optional().describe('Optional number'),
+    query: z.string().describe('The search query'),
   }),
-  handler: async ({ param1, param2 }, context) => {
-    // Your logic here
+  handler: async ({ query }, context) => {
     return {
-      content: [textContent(`Result: ${param1}`)],
+      content: [textContent(`Results for: ${query}`)],
     };
   },
 });
 ```
 
-2. **Create `tests/unit/tools/my-tool.tool.test.ts`**
-
-3. **Done!** The tool is auto-registered on startup.
-
-## Middleware Configuration
-
-| Middleware | Env Var | Default | Description |
-|------------|---------|---------|-------------|
-| Auth | `API_KEY` | — | Required in production |
-| Auth Mode | `AUTH_MODE` | `api-key` | `api-key` or `bearer` |
-| Rate Limit | `RATE_LIMIT_RPM` | `60` | Requests per minute |
-| Idempotency | `IDEMPOTENCY_TTL_MS` | `300000` | Cache TTL (5 min) |
-
-## Observability Setup
-
-### Local Development
-
-```bash
-# Start with observability sidecars
-docker compose up
-
-# View traces: http://localhost:16686 (Jaeger)
-# View metrics: http://localhost:9090 (Prometheus)
-```
-
-### Production
-
-Set `OTEL_EXPORTER_OTLP_ENDPOINT` to your OTLP collector:
-
-```bash
-export OTEL_EXPORTER_OTLP_ENDPOINT=https://otel-collector.example.com
-export OTEL_SERVICE_NAME=my-mcp-server
-npm start
-```
+Tools are auto-discovered from `.tool.ts` files at startup via `@reaatech/mcp-server-tools`.
 
 ## Deployment
 
@@ -133,42 +130,28 @@ docker run -p 8080:8080 -e API_KEY=your-key my-mcp-server
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `PORT` | No | `8080` | Listen port |
+| `PORT` | No | `8080` | Server port |
 | `NODE_ENV` | No | `development` | Environment |
 | `API_KEY` | Yes (prod) | — | Auth key |
-| `CORS_ORIGIN` | No | `*` | CORS allowed origins (`*` or comma-separated list) |
-| `AUTH_BYPASS_IN_DEV` | No | `true` | Allow auth bypass outside production when no key is configured |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | No | — | OTLP endpoint |
-| `OTEL_RESOURCE_ATTRIBUTES` | No | — | Resource attributes (e.g. `service.version=1.0.0`) |
-| `SANITIZATION_DENY_PATTERNS` | No | — | Extra sanitization patterns (comma or newline-separated) |
-| `LOG_LEVEL` | No | `info` | Log level |
+| `CORS_ORIGIN` | No | `*` | CORS allowed origins |
+| `AUTH_MODE` | No | `api-key` | `api-key` or `bearer` |
+| `AUTH_BYPASS_IN_DEV` | No | `true` | Skip auth in dev when no key |
+| `RATE_LIMIT_RPM` | No | `60` | Requests per minute per client |
+| `IDEMPOTENCY_TTL_MS` | No | `300000` | Idempotency cache TTL (5 min) |
+| `SESSION_TIMEOUT_MS` | No | `1800000` | MCP session expiry (30 min) |
+| `LOG_LEVEL` | No | `info` | Pino log level |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | No | — | OpenTelemetry collector URL |
+| `OTEL_SERVICE_NAME` | No | `mcp-server` | Service name in traces |
+| `OTEL_RESOURCE_ATTRIBUTES` | No | — | Additional attributes (`key=value,...`) |
+| `SANITIZATION_DENY_PATTERNS` | No | — | Extra sanitization patterns |
 
-## Project Structure
+## Documentation
 
-```
-src/
-├── config/          # Environment config (Zod validated)
-├── middleware/      # Auth, rate-limit, idempotency, sanitization
-├── observability/   # Logger, tracing, metrics
-├── tools/           # MCP tools (*.tool.ts)
-├── transports/      # StreamableHTTP, SSE
-├── types/           # Shared types and schemas
-├── index.ts         # Express entry point
-└── server.ts        # MCP server factory
-tests/
-├── unit/            # Unit tests
-└── e2e/             # End-to-end tests
-docker/              # Docker compose configs
-infra/               # Terraform modules plus example AWS/GCP root modules
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Ensure tests pass: `npm test`
-4. Submit a pull request
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — System design, package relationships, and data flows
+- [`AGENTS.md`](./AGENTS.md) — Coding conventions and development guidelines
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — Contribution workflow and release process
+- [`docs/`](./docs/) — Deep dives on deployment, observability, security, and tool authoring
 
 ## License
 
-MIT
+[MIT](LICENSE)

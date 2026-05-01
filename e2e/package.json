@@ -1,0 +1,36 @@
+{
+  "name": "@reaatech/mcp-server-starter-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end tests for the MCP server framework",
+  "license": "MIT",
+  "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaatech/mcp-server-starter-ts.git",
+    "directory": "e2e"
+  },
+  "homepage": "https://github.com/reaatech/mcp-server-starter-ts/tree/main/e2e#readme",
+  "bugs": {
+    "url": "https://github.com/reaatech/mcp-server-starter-ts/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@reaatech/mcp-server-core": "workspace:*",
+    "@reaatech/mcp-server-server": "workspace:*",
+    "@reaatech/mcp-server-tools": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^25.6.0",
+    "@types/supertest": "^7.2.0",
+    "express": "^5.1.0",
+    "supertest": "^7.2.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

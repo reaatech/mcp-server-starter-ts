@@ -1,0 +1,58 @@
+{
+  "name": "@reaatech/mcp-server-server",
+  "version": "1.0.0",
+  "description": "MCP server framework with Express, middleware pipeline, and tool orchestration",
+  "license": "MIT",
+  "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaatech/mcp-server-starter-ts.git",
+    "directory": "packages/server"
+  },
+  "homepage": "https://github.com/reaatech/mcp-server-starter-ts/tree/main/packages/server#readme",
+  "bugs": {
+    "url": "https://github.com/reaatech/mcp-server-starter-ts/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@reaatech/mcp-server-auth": "workspace:*",
+    "@reaatech/mcp-server-core": "workspace:*",
+    "@reaatech/mcp-server-observability": "workspace:*",
+    "@reaatech/mcp-server-tools": "workspace:*",
+    "@reaatech/mcp-server-transport": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^5.0.0",
+    "helmet": "^7.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.1",
+    "@types/supertest": "^7.2.0",
+    "supertest": "^7.2.2",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

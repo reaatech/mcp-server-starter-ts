@@ -1,83 +1,74 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+  # Uncomment after first manual publish succeeds:
+  # push:
+  #   branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 22
 
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+      id-token: write
       packages: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: npm run test:unit -- --ci
+      - name: Build packages
+        run: pnpm build
 
-      - name: Build
-        run: npm run build
-
-      - name: Generate changelog
-        id: changelog
-        uses: actions/github-script@v7
+      - name: Create release PR or publish to npm
+        id: changesets
+        uses: changesets/action@v1
         with:
-          script: |
-            let changes = '- Initial release';
-            try {
-              const tags = await github.rest.repos.listTags({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                per_page: 2,
-              });
-              if (tags.data.length >= 2) {
-                const { data: commits } = await github.rest.repos.compareCommits({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  base: tags.data[1].name,
-                  head: context.sha,
-                });
-                changes = commits.commits.map(c => {
-                  const msg = c.commit.message.split('\n')[0];
-                  return `- ${msg}`;
-                }).join('\n') || '- Initial release';
-              }
-            } catch {
-              changes = '- Initial release';
-            }
-            core.setOutput('changelog', changes);
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body: ${{ steps.changelog.outputs.changelog }}
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
+          publish: pnpm release
+          version: pnpm version-packages
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
         env:
-          REGISTRY: ghcr.io
-          IMAGE_NAME: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Mirror published packages to GitHub Packages
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker build -t ghcr.io/${{ github.repository }}:${{ github.ref_name }} .
-          docker build -t ghcr.io/${{ github.repository }}:latest .
-          docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          docker push ghcr.io/${{ github.repository }}:latest
+          cat > .npmrc <<EOF
+          @reaatech:registry=https://npm.pkg.github.com
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
+          echo "$PUBLISHED_PACKAGES" | jq -r '.[].name' | while read -r name; do
+            dir="packages/${name#@reaatech/mcp-server-}"
+            echo "Mirroring $name -> $dir"
+            (cd "$dir" && npm publish --registry=https://npm.pkg.github.com)
+          done

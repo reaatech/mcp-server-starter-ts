@@ -1,0 +1,32 @@
+{
+  "name": "@reaatech/mcp-server-example-basic-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example: minimal MCP server with full middleware pipeline and built-in tools",
+  "license": "MIT",
+  "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaatech/mcp-server-starter-ts.git",
+    "directory": "examples/01-basic-server"
+  },
+  "homepage": "https://github.com/reaatech/mcp-server-starter-ts/tree/main/examples/01-basic-server#readme",
+  "bugs": {
+    "url": "https://github.com/reaatech/mcp-server-starter-ts/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@reaatech/mcp-server-core": "workspace:*",
+    "@reaatech/mcp-server-server": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}

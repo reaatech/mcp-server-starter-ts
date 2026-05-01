@@ -1,428 +1,109 @@
----
-agent_id: "mcp-server-starter-ts"
-display_name: "MCP Server Starter (TypeScript)"
-version: "1.0.0"
-description: "TypeScript starter template for building MCP servers"
-type: "mcp"
-confidence_threshold: 0.9
----
+# AGENTS.md — mcp-server-starter-ts
 
-# mcp-server-starter-ts — Agent Development Guide
+> Agent-focused guidance for contributing to this codebase.
 
-## What this is
+## Project Structure
 
-This document defines the agent interaction model, skill definitions, and development
-patterns for building AI agents on top of the `mcp-server-starter-ts` template. It
-complements `CLAUDE.md` (which covers general development) by focusing specifically
-on agent capabilities, tool design, and multi-agent orchestration patterns.
-
-**Target audience:** Engineers building MCP-compliant AI agents, platform teams
-integrating agents into orchestration layers, and SREs deploying agent infrastructure.
-
----
-
-## Architecture Overview
+This is a **pnpm workspace monorepo** managed with Turborepo.
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   AI Client     │────▶│  MCP Transport   │────▶│   Tool Router   │
-│  (Claude, etc)  │     │ StreamableHTTP   │     │  (middleware)   │
-└─────────────────┘     │      / SSE       │     └─────────────────┘
-                              └──────────────────┘            │
-                                                              ▼
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Orchestrator   │────▶│  Agent Registry  │────▶│   Skill Pool    │
-│  (router/core)  │     │  (YAML configs)  │     │ (Zod-validated) │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
+packages/
+  core/          — Core MCP types, Zod schemas, configuration, version
+  auth/          — Authentication middleware (API key, bearer token)
+  observability/ — Structured logging, OpenTelemetry tracing, metrics
+  transport/     — MCP transport implementations (Streamable HTTP, SSE)
+  tools/         — Tool registry, discovery, and built-in tools
+  server/        — MCP server framework (Express, middleware pipeline)
+examples/
+  01-basic-server/  — Minimal MCP server consuming @reaatech/mcp-server-server
+e2e/             — End-to-end tests using vitest + supertest
 ```
 
-### Key Components
+## Build System
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| **Transport Layer** | `src/transports/` | StreamableHTTP (primary) + SSE (legacy) |
-| **Tool Registry** | `src/tools/` | Auto-discovered tool modules with Zod schemas |
-| **Middleware Stack** | `src/middleware/` | Auth → Rate Limit → Idempotency → Sanitization |
-| **Skill Definitions** | `skills/*.md` | Human-readable skill specs for agent discovery |
-| **Agent Config** | `agent.yaml` (optional) | Self-describing agent metadata for orchestrators |
+- **Package manager:** pnpm (required)
+- **Build tool:** tsup (per-package) + Turborepo (orchestration)
+- **Format/Lint:** Biome (not Prettier/ESLint)
+- **Test:** Vitest
+- **TypeScript:** Strict mode, ESM + CJS dual output
 
----
-
-## Skill System
-
-Skills are the atomic unit of agent capability. Each skill maps to one or more
-MCP tools and is described by a `skills/{skill-id}.md` file.
-
-### Skill File Structure
-
-```markdown
-# {skill-display-name}
-
-## Capability
-One-sentence description of what this skill enables.
-
-## MCP Tools
-| Tool | Input Schema | Output | Rate Limit |
-|------|-------------|--------|------------|
-| `tool_name` | Zod schema summary | Return type | RPM |
-
-## Usage Examples
-### Example 1: Basic usage
-- User intent
-- Tool call
-- Expected response
-
-## Error Handling
-- Known failure modes
-- Recovery strategies
-- Escalation paths
-
-## Security Considerations
-- PII handling
-- Permission requirements
-- Audit logging
-```
-
-### Built-in Skills (Template)
-
-The template ships with two example skills:
-
-| Skill ID | File | Description |
-|----------|------|-------------|
-| `echo` | `skills/echo.md` | Basic echo capability — template for new skills |
-| `health-check` | `skills/health-check.md` | Server diagnostics and readiness/liveness reporting |
-
-### Adding a New Skill
-
-1. **Create the skill definition:**
-   ```bash
-   touch skills/my-skill.md
-   ```
-
-2. **Create the tool implementation:**
-   ```bash
-   touch src/tools/my-skill.tool.ts
-   ```
-
-3. **Create the test:**
-   ```bash
-   touch tests/unit/tools/my-skill.tool.test.ts
-   ```
-
-4. **Update this document** with the new skill in the table above.
-
----
-
-## Agent Configuration
-
-Agents using this template can self-describe via an optional `agent.yaml` file
-at the repository root. This enables dynamic registration with orchestrators
-like `ask-gm/orchestrator-core`.
-
-### agent.yaml Schema
-
-```yaml
-# agent.yaml — Self-describing agent metadata
-agent_id: "my-agent"
-display_name: "My Agent"
-description: >-
-  Description of agent capabilities, used in classifier prompts
-  for routing decisions.
-endpoint: "${MCP_ENDPOINT:-http://localhost:8080}"
-type: mcp
-is_default: false
-confidence_threshold: 0.7
-clarification_required: false
-clarification_context: >-
-  User-facing description shown when clarification is needed.
-examples:
-  - "Example user query that should route here"
-  - "Another example query"
-skills:
-  - echo
-  - my-skill
-```
-
-### Registration with Orchestrator
-
-For multi-agent platforms (like ask-gm), copy your `agent.yaml` to the
-orchestrator's agent registry:
+### Common Commands
 
 ```bash
-cp agent.yaml ../orchestrator-core/agents/my-agent.yaml
-# Or reference via environment variable endpoint
+# Install all dependencies
+pnpm install
+
+# Build everything
+pnpm build
+
+# Run all tests
+pnpm test
+
+# Lint & format
+pnpm lint
+pnpm lint:fix
+
+# Type-check without emit
+pnpm typecheck
+
+# Create a changeset for versioning
+pnpm changeset
+
+# Bump versions per pending changesets
+pnpm version-packages
+
+# Publish packages (CI-only after first publish bootstrap)
+pnpm release
 ```
 
----
+## Coding Conventions
 
-## Tool Design Patterns
+1. **Runtime validation:** Use Zod for all external-facing data. Never trust raw JSON.
+2. **Logging:** Use Pino (from `packages/observability`). Never `console.log` in library code.
+3. **Error handling:** Return structured error responses with `isError: true`. Never throw unhandled errors.
+4. **Types:** Prefer `type` over `interface` for data shapes. Keep `interface` for class contracts.
+5. **No `any`:** Biome is configured to error on `any`. Use `unknown` + narrowing instead.
+6. **Exports:** Always provide ESM + CJS dual output with `types` condition first in `exports`.
+7. **No comments:** Do not add comments in source files. Let the code speak for itself.
+8. **Imports:** Use `.js` extensions for relative imports to satisfy ESM resolution. Import from workspace packages via the `@reaatech/mcp-server-*` scope.
 
-### Zod Schema Best Practices
+## Adding a New Package
 
-```typescript
-// ✅ GOOD: Descriptive, validated, typed
-inputSchema: z.object({
-  userId: z.string().uuid('Must be a valid UUID'),
-  action: z.enum(['create', 'read', 'update', 'delete']),
-  metadata: z.record(z.unknown()).optional(),
-}),
+1. Create `packages/<name>/` with `package.json`, `tsconfig.json`, `src/index.ts`
+2. Use `@reaatech/mcp-server-core` for shared types. Do not duplicate schemas.
+3. Add to `pnpm-workspace.yaml` if not under `packages/*`
+4. Follow the package template (see `packages/core/package.json` for the canonical shape):
+   - Dual CJS+ESM exports with `types` condition first
+   - `publishConfig: { access: "public" }`
+   - `files: ["dist"]`
+   - `repository.directory` pointing to the package subdirectory
+   - Per-package `vitest.config.ts` and `tsconfig.json` extending root
+   - Build output goes to `dist/` only (never `src/`)
 
-// ❌ BAD: Unvalidated, any types
-inputSchema: z.object({
-  id: z.any(),
-  data: z.any(),
-}),
-```
+## Adding a New Tool
 
-### Handler Error Patterns
+1. Create `packages/tools/src/my-tool.tool.ts`
+2. Use `defineTool()` from `@reaatech/mcp-server-tools`
+3. Add a corresponding `packages/tools/src/my-tool.test.ts`
+4. Built-in tools are loaded at startup by `discoverTools()`
+5. Custom tools are auto-discovered from `.tool.ts` files at runtime
 
-```typescript
-// ✅ GOOD: Structured error responses
-handler: async ({ userId, action }) => {
-  try {
-    const result = await doSomething(userId, action);
-    return { content: [{ type: 'text', text: JSON.stringify(result) }] };
-  } catch (error) {
-    logger.error({ err: error, userId, action }, 'Tool execution failed');
-    return {
-      content: [{
-        type: 'text',
-        text: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      }],
-      isError: true,
-    };
-  }
-},
+## Testing
 
-// ❌ BAD: Throwing unhandled errors
-handler: async ({ userId }) => {
-  return doSomething(userId); // May throw and break protocol
-},
-```
+- Unit tests live next to source files: `src/foo.test.ts`
+- E2E tests live in `e2e/`
+- Always run `pnpm test` before committing
+- Test files are excluded from build output (tsup only bundles `src/index.ts` entry)
 
-### Idempotency
+## Release Process
 
-Tools that perform mutations MUST be idempotent when called with the same
-`Idempotency-Key` header. The middleware handles deduplication, but tool
-implementations should also be safe to retry:
-
-```typescript
-// ✅ GOOD: Idempotent by design
-handler: async ({ userId, action }, { idempotencyKey }) => {
-  // Use idempotencyKey as a dedup key in your data store
-  const existing = await findByNameKey(idempotencyKey);
-  if (existing) return existing;
-  return createWithDedupKey(userId, action, idempotencyKey);
-},
-```
-
----
-
-## Security Model
-
-### Input Sanitization
-
-The `sanitization` middleware strips prompt-injection patterns from all tool
-inputs. Tools should NOT perform additional sanitization unless handling
-sensitive data types:
-
-```typescript
-// The middleware handles this — don't duplicate
-// ❌ Don't do this:
-handler: async ({ message }) => {
-  const clean = message.replace(/<script>/g, ''); // Redundant
-  // ...
-}
-```
-
-### PII Handling
-
-- **Never log raw user input** — the pino logger is configured to redact
-  common PII patterns
-- **Never return PII in error messages** — use generic error text
-- **Use the `observability/logger.ts` utilities** for safe logging:
-  ```typescript
-  import { safeLog } from '../observability/logger.js';
-  safeLog({ event: 'user_action', userId: hash(userId) }); // Hash PII
-  ```
-
-### Authentication
-
-The `auth` middleware supports two modes:
-
-| Mode | Config | Use Case |
-|------|--------|----------|
-| API Key | `API_KEY` env var | Service-to-service |
-| Bearer Token | `AUTH_MODE=bearer` | User-authenticated requests |
-
-Tools should not implement their own auth checks — rely on the middleware.
-
----
-
-## Observability for Agents
-
-### Structured Logging
-
-Every log line includes `request_id` and `service` automatically. Add
-agent-specific context:
-
-```typescript
-import { logger } from '../observability/logger.js';
-
-logger.info({
-  tool: 'my_tool',
-  action: 'create',
-  userId: hashedId,
-  durationMs: elapsed,
-}, 'Tool execution completed');
-```
-
-### Tracing
-
-Each tool call is automatically traced as an OTel span. Add custom attributes:
-
-```typescript
-import { trace } from '@opentelemetry/api';
-
-const span = trace.getActiveSpan();
-span?.setAttribute('custom.attribute', 'value');
-```
-
-### Metrics
-
-The template exposes these default metrics:
-
-| Metric | Type | Labels |
-|--------|------|--------|
-| `mcp.tool.invocations` | Counter | `tool`, `status` |
-| `mcp.tool.duration` | Histogram | `tool` (P50/P90/P99) |
-| `mcp.transport.requests` | Counter | `transport`, `status` |
-
-Add custom metrics via the `metrics.ts` module.
-
----
-
-## Testing Agents
-
-### Unit Tests (Tool Level)
-
-```typescript
-// tests/unit/tools/my-tool.tool.test.ts
-import myTool from '../../src/tools/my-tool.tool.js';
-
-describe('my-tool', () => {
-  it('should handle valid input', async () => {
-    const result = await myTool.handler({ param: 'value' }, {});
-    expect(result.content[0].type).toBe('text');
-  });
-
-  it('should handle errors gracefully', async () => {
-    const result = await myTool.handler({ param: 'invalid' }, {});
-    expect(result.isError).toBe(true);
-  });
-});
-```
-
-### Integration Tests (Transport Level)
-
-```typescript
-// tests/e2e/streamable-http.test.ts
-import { startServer } from '../../src/index.js';
-
-describe('StreamableHTTP transport', () => {
-  beforeAll(async () => { await startServer(); });
-  afterAll(async () => { await stopServer(); });
-
-  it('should execute tool via MCP protocol', async () => {
-    const response = await fetch('http://localhost:8080/mcp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'tools/call',
-        params: { name: 'echo', arguments: { message: 'hello' } },
-      }),
-    });
-    const result = await response.json();
-    expect(result.result.content[0].text).toBe('hello');
-  });
-});
-```
-
-### E2E Tests (Orchestrator Integration)
-
-For agents participating in a multi-agent system, test the full routing flow:
-
-```typescript
-// tests/e2e/orchestrator-integration.test.ts
-describe('Multi-agent routing', () => {
-  it('should route to correct agent based on classifier', async () => {
-    // Test that queries matching this agent's examples
-    // are correctly routed by the orchestrator
-  });
-});
-```
-
----
-
-## Deployment
-
-### Environment Variables
-
-| Variable | Required | Default | Purpose |
-|----------|----------|---------|---------|
-| `PORT` | no | `8080` | HTTP listen port |
-| `NODE_ENV` | no | `development` | Environment |
-| `API_KEY` | yes (prod) | — | Auth middleware key |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | no | — | OTel collector |
-| `OTEL_SERVICE_NAME` | no | `mcp-server` | Service name |
-| `IDEMPOTENCY_TTL_MS` | no | `300000` | Idempotency cache TTL |
-| `RATE_LIMIT_RPM` | no | `60` | Rate limit per client |
-| `LOG_LEVEL` | no | `info` | Pino log level |
-
-### Terraform Deployment
+Uses [Changesets](https://github.com/changesets/changesets) for versioning and publishing.
 
 ```bash
-# GCP Cloud Run
-cd infra/gcp && terraform apply
+# Add a changeset (interactive: pick packages, bump type, write summary)
+pnpm changeset
 
-# AWS Lambda + API Gateway
-cd infra/aws && terraform apply
+# CI opens a "Version Packages" PR on push to main
+# Merging the PR publishes to npm + mirrors to GitHub Packages
 ```
 
-Both deployments configure:
-- Secret management (GCP Secret Manager / AWS Secrets Manager)
-- OTel sidecar for observability
-- IAM roles with least privilege
-- Health check endpoints
-
----
-
-## Checklist: Production Readiness
-
-Before deploying an agent to production:
-
-- [ ] All tools have corresponding `*.tool.test.ts` files
-- [ ] All tools have Zod-validated input schemas
-- [ ] Error handling returns structured responses (no unhandled throws)
-- [ ] No PII in logs (verified via log sampling)
-- [ ] `API_KEY` configured for auth middleware
-- [ ] OTel exporter configured for tracing/metrics
-- [ ] Rate limiting tuned for expected traffic
-- [ ] Idempotency implemented for mutation tools
-- [ ] Skill definitions (`skills/*.md`) are complete
-- [ ] Agent config (`agent.yaml`) is accurate
-- [ ] Docker image built with multi-stage Dockerfile
-- [ ] Terraform state configured for remote backend
-- [ ] CI pipeline passes (lint, typecheck, test, build)
-
----
-
-## References
-
-- **CLAUDE.md** — General development guide for this template
-- **README.md** — Quick start and overview
-- **ARCHITECTURE.md** — Deep dive into system design
-- **ask-gm/orchestrator-core** — Multi-agent orchestration reference
-- **MCP Specification** — https://modelcontextprotocol.io/
