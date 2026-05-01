@@ -1,6 +1,6 @@
-# @reaatech/mcp-server-server
+# @reaatech/mcp-server-engine
 
-[![npm version](https://img.shields.io/npm/v/@reaatech/mcp-server-server.svg)](https://www.npmjs.com/package/@reaatech/mcp-server-server)
+[![npm version](https://img.shields.io/npm/v/@reaatech/mcp-server-engine.svg)](https://www.npmjs.com/package/@reaatech/mcp-server-engine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/reaatech/mcp-server-starter-ts/blob/main/LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/reaatech/mcp-server-starter-ts/ci.yml?branch=main&label=CI)](https://github.com/reaatech/mcp-server-starter-ts/actions/workflows/ci.yml)
 
@@ -11,9 +11,9 @@ MCP server framework built on Express 5 with a composable middleware pipeline, t
 ## Installation
 
 ```bash
-npm install @reaatech/mcp-server-server
+npm install @reaatech/mcp-server-engine
 # or
-pnpm add @reaatech/mcp-server-server
+pnpm add @reaatech/mcp-server-engine
 ```
 
 ## Feature Overview
@@ -32,7 +32,7 @@ pnpm add @reaatech/mcp-server-server
 ### Start a Server (30 seconds)
 
 ```typescript
-import { startServer } from '@reaatech/mcp-server-server';
+import { startServer } from '@reaatech/mcp-server-engine';
 
 // Built-in echo and health-check tools are available
 // Transport, auth, rate limiting, idempotency, and sanitization are all configured
@@ -53,7 +53,7 @@ PORT=8080 pnpm dev
 ### Customize the App
 
 ```typescript
-import { createApp } from '@reaatech/mcp-server-server';
+import { createApp } from '@reaatech/mcp-server-engine';
 
 const app = await createApp();
 
@@ -101,7 +101,7 @@ startServer();
 Creates an MCP server instance with the given tools. Each tool is registered with the MCP SDK's `server.tool()` method. Tool execution is wrapped in OpenTelemetry spans and emits metrics.
 
 ```typescript
-import { createMcpServer } from '@reaatech/mcp-server-server';
+import { createMcpServer } from '@reaatech/mcp-server-engine';
 import { getTools } from '@reaatech/mcp-server-tools';
 
 const server = createMcpServer(getTools());
@@ -116,7 +116,7 @@ import {
   rateLimitMiddleware,
   idempotencyMiddleware,
   sanitizationMiddleware,
-} from '@reaatech/mcp-server-server';
+} from '@reaatech/mcp-server-engine';
 
 app.use(rateLimitMiddleware());
 app.use(idempotencyMiddleware());
