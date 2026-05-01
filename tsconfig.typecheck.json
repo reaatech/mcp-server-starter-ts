@@ -10,5 +10,6 @@
       "@reaatech/mcp-server-tools": ["./packages/tools/src/index.ts"],
       "@reaatech/mcp-server-server": ["./packages/server/src/index.ts"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "*.config.js", "e2e", "examples", "**/*.test.ts"]
 }
