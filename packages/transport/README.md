@@ -29,7 +29,7 @@ pnpm add @reaatech/mcp-server-transport
 ```typescript
 import express from 'express';
 import { mountStreamableHTTP, mountSSE } from '@reaatech/mcp-server-transport';
-import { createMcpServer, getTools } from '@reaatech/mcp-server-server';
+import { createMcpServer, getTools } from '@reaatech/mcp-server-engine';
 
 const app = express();
 app.use(express.json());
@@ -127,10 +127,10 @@ Uses environment variables from `@reaatech/mcp-server-core`:
 
 ## Integration with the Server
 
-The `@reaatech/mcp-server-server` package mounts both transports automatically when you use `createApp()`:
+The `@reaatech/mcp-server-engine` package mounts both transports automatically when you use `createApp()`:
 
 ```typescript
-import { createApp } from '@reaatech/mcp-server-server';
+import { createApp } from '@reaatech/mcp-server-engine';
 
 const app = await createApp();
 // StreamableHTTP mounted at POST /mcp, DELETE /mcp
@@ -143,7 +143,7 @@ app.listen(8080);
 
 - [`@reaatech/mcp-server-core`](https://www.npmjs.com/package/@reaatech/mcp-server-core) — Configuration and types
 - [`@reaatech/mcp-server-observability`](https://www.npmjs.com/package/@reaatech/mcp-server-observability) — Transport metrics
-- [`@reaatech/mcp-server-server`](https://www.npmjs.com/package/@reaatech/mcp-server-server) — MCP server framework
+- [`@reaatech/mcp-server-engine`](https://www.npmjs.com/package/@reaatech/mcp-server-engine) — MCP server framework
 
 ## License
 

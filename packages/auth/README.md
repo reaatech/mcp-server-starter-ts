@@ -99,7 +99,7 @@ export NODE_ENV=development
 ## Integration with the Server
 
 ```typescript
-import { createApp } from '@reaatech/mcp-server-server';
+import { createApp } from '@reaatech/mcp-server-engine';
 // authMiddleware() is called automatically inside createApp()
 
 const app = await createApp();
@@ -111,7 +111,7 @@ The server framework applies `authMiddleware()` as the first step in the middlew
 ## Related Packages
 
 - [`@reaatech/mcp-server-core`](https://www.npmjs.com/package/@reaatech/mcp-server-core) — Configuration and shared types
-- [`@reaatech/mcp-server-server`](https://www.npmjs.com/package/@reaatech/mcp-server-server) — MCP server framework
+- [`@reaatech/mcp-server-engine`](https://www.npmjs.com/package/@reaatech/mcp-server-engine) — MCP server framework
 
 ## License
 

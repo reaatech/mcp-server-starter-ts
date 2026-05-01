@@ -144,7 +144,7 @@ Returns server health diagnostics: uptime, version, environment, timestamp, and 
 ## Integration with the Server
 
 ```typescript
-import { createApp } from '@reaatech/mcp-server-server';
+import { createApp } from '@reaatech/mcp-server-engine';
 // discoverTools() is called automatically inside createApp()
 
 const app = await createApp();
@@ -156,7 +156,7 @@ app.listen(8080);
 
 - [`@reaatech/mcp-server-core`](https://www.npmjs.com/package/@reaatech/mcp-server-core) — `ToolResponse`, `ToolContext`, content helpers
 - [`@reaatech/mcp-server-observability`](https://www.npmjs.com/package/@reaatech/mcp-server-observability) — Tool execution logging and metrics
-- [`@reaatech/mcp-server-server`](https://www.npmjs.com/package/@reaatech/mcp-server-server) — Server framework that consumes the registry
+- [`@reaatech/mcp-server-engine`](https://www.npmjs.com/package/@reaatech/mcp-server-engine) — Server framework that consumes the registry
 
 ## License
 

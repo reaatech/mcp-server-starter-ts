@@ -1,5 +1,5 @@
 {
-  "name": "@reaatech/mcp-server-server",
+  "name": "@reaatech/mcp-server-engine",
   "version": "1.0.0",
   "description": "MCP server framework with Express, middleware pipeline, and tool orchestration",
   "license": "MIT",
@@ -7,9 +7,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/reaatech/mcp-server-starter-ts.git",
-    "directory": "packages/server"
+    "directory": "packages/engine"
   },
-  "homepage": "https://github.com/reaatech/mcp-server-starter-ts/tree/main/packages/server#readme",
+  "homepage": "https://github.com/reaatech/mcp-server-starter-ts/tree/main/packages/engine#readme",
   "bugs": {
     "url": "https://github.com/reaatech/mcp-server-starter-ts/issues"
   },

@@ -141,10 +141,10 @@ import { initMetrics, recordToolInvocation, recordError, setActiveSessionCount, 
 
 ## Integration with the Server
 
-The `@reaatech/mcp-server-server` package calls `initObservability()` at startup when you use `createApp()` or `startServer()`:
+The `@reaatech/mcp-server-engine` package calls `initObservability()` at startup when you use `createApp()` or `startServer()`:
 
 ```typescript
-import { startServer } from '@reaatech/mcp-server-server';
+import { startServer } from '@reaatech/mcp-server-engine';
 
 // Tracing and metrics initialize automatically
 startServer();
@@ -155,7 +155,7 @@ Tool executions triggered through the server automatically emit spans and record
 ## Related Packages
 
 - [`@reaatech/mcp-server-core`](https://www.npmjs.com/package/@reaatech/mcp-server-core) — Configuration and types
-- [`@reaatech/mcp-server-server`](https://www.npmjs.com/package/@reaatech/mcp-server-server) — MCP server framework
+- [`@reaatech/mcp-server-engine`](https://www.npmjs.com/package/@reaatech/mcp-server-engine) — MCP server framework
 - [`@reaatech/mcp-server-tools`](https://www.npmjs.com/package/@reaatech/mcp-server-tools) — Tool registry (emits spans and metrics)
 
 ## License

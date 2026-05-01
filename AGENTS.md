@@ -13,9 +13,9 @@ packages/
   observability/ — Structured logging, OpenTelemetry tracing, metrics
   transport/     — MCP transport implementations (Streamable HTTP, SSE)
   tools/         — Tool registry, discovery, and built-in tools
-  server/        — MCP server framework (Express, middleware pipeline)
+  engine/        — MCP server framework (Express, middleware pipeline)
 examples/
-  01-basic-server/  — Minimal MCP server consuming @reaatech/mcp-server-server
+  01-basic-server/  — Minimal MCP server consuming @reaatech/mcp-server-engine
 e2e/             — End-to-end tests using vitest + supertest
 ```
 

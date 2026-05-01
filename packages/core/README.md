@@ -149,7 +149,7 @@ function handleResponse(raw: unknown): ToolResponse {
 
 ## Related Packages
 
-- [`@reaatech/mcp-server-server`](https://www.npmjs.com/package/@reaatech/mcp-server-server) — MCP server framework
+- [`@reaatech/mcp-server-engine`](https://www.npmjs.com/package/@reaatech/mcp-server-engine) — MCP server framework
 - [`@reaatech/mcp-server-tools`](https://www.npmjs.com/package/@reaatech/mcp-server-tools) — Tool registry and built-in tools
 - [`@reaatech/mcp-server-auth`](https://www.npmjs.com/package/@reaatech/mcp-server-auth) — Authentication middleware
 - [`@reaatech/mcp-server-observability`](https://www.npmjs.com/package/@reaatech/mcp-server-observability) — Logging, tracing, metrics
