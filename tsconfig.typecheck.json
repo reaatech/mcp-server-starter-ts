@@ -8,7 +8,7 @@
       "@reaatech/mcp-server-observability": ["./packages/observability/src/index.ts"],
       "@reaatech/mcp-server-transport": ["./packages/transport/src/index.ts"],
       "@reaatech/mcp-server-tools": ["./packages/tools/src/index.ts"],
-      "@reaatech/mcp-server-server": ["./packages/server/src/index.ts"]
+      "@reaatech/mcp-server-engine": ["./packages/engine/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist", "*.config.js", "e2e", "examples", "**/*.test.ts"]

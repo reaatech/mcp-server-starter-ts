@@ -26,7 +26,7 @@ Packages are published under the `@reaatech` scope and can be installed individu
 
 ```bash
 # Server framework (includes all middleware and transports)
-pnpm add @reaatech/mcp-server-server
+pnpm add @reaatech/mcp-server-engine
 
 # Core types and configuration
 pnpm add @reaatech/mcp-server-core
@@ -69,7 +69,7 @@ pnpm lint
 Create a minimal MCP server with built-in tools in under 10 lines:
 
 ```typescript
-import { startServer } from '@reaatech/mcp-server-server';
+import { startServer } from '@reaatech/mcp-server-engine';
 
 // Built-in echo and health-check tools are available
 // Auth, rate limiting, idempotency, and sanitization are configured
@@ -92,7 +92,7 @@ See the [`examples/01-basic-server/`](./examples/01-basic-server/) for the compl
 | [`@reaatech/mcp-server-observability`](./packages/observability) | Structured logging, OpenTelemetry tracing, and metrics |
 | [`@reaatech/mcp-server-transport`](./packages/transport) | MCP transport implementations (Streamable HTTP, SSE) |
 | [`@reaatech/mcp-server-tools`](./packages/tools) | Tool registry, discovery, and built-in tools |
-| [`@reaatech/mcp-server-server`](./packages/server) | MCP server framework (Express, middleware pipeline) |
+| [`@reaatech/mcp-server-engine`](./packages/engine) | MCP server framework (Express, middleware pipeline) |
 
 ## Tool Authoring
 

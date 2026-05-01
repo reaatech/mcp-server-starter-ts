@@ -1,4 +1,4 @@
-import { startServer } from '@reaatech/mcp-server-server';
+import { startServer } from '@reaatech/mcp-server-engine';
 
 startServer().catch((error: Error) => {
   console.error('Failed to start server:', error.message);

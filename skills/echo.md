@@ -74,7 +74,7 @@ z.object({
     }
   }
   ```
-  Note: The sanitization middleware in `@reaatech/mcp-server-server` strips dangerous patterns like `<script>` tags from the input before it reaches the tool.
+  Note: The sanitization middleware in `@reaatech/mcp-server-engine` strips dangerous patterns like `<script>` tags from the input before it reaches the tool.
 
 ## Error Handling
 

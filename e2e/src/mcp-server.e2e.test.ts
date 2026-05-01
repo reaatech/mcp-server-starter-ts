@@ -1,4 +1,4 @@
-import { createApp } from '@reaatech/mcp-server-server';
+import { createApp } from '@reaatech/mcp-server-engine';
 import type { Express } from 'express';
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';

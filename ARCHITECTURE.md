@@ -43,10 +43,10 @@ tools ──► core, observability
 transport ──► core, observability
 auth ──► core
 observability ──► core
-server ──► core, auth, observability, transport, tools
+engine ──► core, auth, observability, transport, tools
 ```
 
-`core` is the foundation — every package depends on it. `server` is the top-level package that ties everything together.
+`core` is the foundation — every package depends on it. `engine` is the top-level package that ties everything together.
 
 ## Data Flow
 
@@ -90,16 +90,16 @@ Request
   │      Attaches RequestContext to req
   │      Returns 401 on failure
   │
-  ├──► Rate Limit Middleware  (packages/server)
+  ├──► Rate Limit Middleware  (packages/engine)
   │      Token bucket per client (hashed API key or IP)
   │      Returns 429 with Retry-After on breach
   │
-  ├──► Idempotency Middleware (packages/server)
+  ├──► Idempotency Middleware (packages/engine)
   │      Checks Idempotency-Key header
   │      Returns cached response for duplicates within TTL
   │      Caches new responses for future deduplication
   │
-  ├──► Sanitization Middleware (packages/server)
+  ├──► Sanitization Middleware (packages/engine)
   │      Strips prompt-injection patterns from string inputs
   │      Logs sanitization events without raw input content
   │
@@ -127,7 +127,7 @@ Request
 
 ### 1. Composition over Monolith
 
-Each concern lives in its own package with a single responsibility. `server` composes them into a working application. Consumers can pick individual packages for their own use cases.
+Each concern lives in its own package with a single responsibility. `engine` composes them into a working application. Consumers can pick individual packages for their own use cases.
 
 ### 2. Fail Fast
 
