@@ -1,0 +1,51 @@
+{
+  "name": "@reaatech/mcp-server-transport",
+  "version": "1.0.0",
+  "description": "MCP transport implementations (Streamable HTTP, SSE) with session management",
+  "license": "MIT",
+  "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaatech/mcp-server-starter-ts.git",
+    "directory": "packages/transport"
+  },
+  "homepage": "https://github.com/reaatech/mcp-server-starter-ts/tree/main/packages/transport#readme",
+  "bugs": {
+    "url": "https://github.com/reaatech/mcp-server-starter-ts/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@reaatech/mcp-server-core": "workspace:*",
+    "@reaatech/mcp-server-observability": "workspace:*",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^25.6.0",
+    "express": "^5.1.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}
