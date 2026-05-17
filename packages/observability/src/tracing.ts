@@ -1,7 +1,7 @@
 import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { envConfig, SERVICE_VERSION } from '@reaatech/mcp-server-core';
 import { logger } from './logger.js';
@@ -22,7 +22,7 @@ export async function initObservability(): Promise<void> {
     return;
   }
 
-  let resource = new Resource({
+  let resource = resourceFromAttributes({
     'service.name': envConfig.OTEL_SERVICE_NAME,
     'service.version': SERVICE_VERSION,
     'deployment.environment': envConfig.NODE_ENV,
@@ -39,7 +39,7 @@ export async function initObservability(): Promise<void> {
       },
       {} as Record<string, string>,
     );
-    resource = resource.merge(new Resource(attrs));
+    resource = resource.merge(resourceFromAttributes(attrs));
   }
 
   const traceExporter = new OTLPTraceExporter({
