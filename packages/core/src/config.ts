@@ -1,10 +1,11 @@
-import type { ZodDefault, ZodEffects, ZodNumber } from 'zod';
 import { z } from 'zod';
+
+import type { ZodDefault } from 'zod';
 
 const positiveInt = (
   name: string,
   defaultValue: string,
-): ZodEffects<ZodDefault<ZodNumber>, number, unknown> =>
+): ZodDefault<ReturnType<typeof z.coerce.number>> =>
   z.coerce
     .number()
     .default(Number.parseInt(defaultValue, 10))
