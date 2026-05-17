@@ -1,9 +1,9 @@
 export type { ToolDefinition } from './registry.js';
 export {
-  defineTool,
-  registerTool,
-  getTools,
-  getTool,
   clearTools,
+  defineTool,
   discoverTools,
+  getTool,
+  getTools,
+  registerTool,
 } from './registry.js';

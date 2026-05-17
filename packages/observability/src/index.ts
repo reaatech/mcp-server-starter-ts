@@ -1,22 +1,22 @@
 export {
-  logger,
   createRequestLogger,
-  logToolExecution,
+  logger,
   logMiddlewareEvent,
+  logToolExecution,
   safeLog,
 } from './logger.js';
 export {
   initMetrics,
-  recordToolInvocation,
   recordError,
-  setActiveSessionCount,
+  recordToolInvocation,
   recordTransportRequest,
+  setActiveSessionCount,
   shutdownMetrics,
 } from './metrics.js';
 export {
-  initObservability,
-  shutdownObservability,
   getTracer,
-  withSpan,
+  initObservability,
   setSpanAttributes,
+  shutdownObservability,
+  withSpan,
 } from './tracing.js';

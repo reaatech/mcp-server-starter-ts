@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
-import { envConfig } from '@reaatech/mcp-server-core';
 import type { RequestContext } from '@reaatech/mcp-server-core';
+import { envConfig } from '@reaatech/mcp-server-core';
 import type { NextFunction, Request, Response } from 'express';
 
 declare global {
