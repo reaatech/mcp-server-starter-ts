@@ -1,7 +1,7 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
-import { envConfig } from '@reaatech/mcp-server-core';
 import type { RequestContext } from '@reaatech/mcp-server-core';
+import { envConfig } from '@reaatech/mcp-server-core';
 import { logger, recordTransportRequest } from '@reaatech/mcp-server-observability';
 import type { Express as ExpressApp, Request, Response } from 'express';
 import { updateTransportSessionCount } from './session-metrics.js';

@@ -1,5 +1,4 @@
-import { textContent } from '@reaatech/mcp-server-core';
-import { SERVICE_NAME, SERVICE_VERSION, envConfig } from '@reaatech/mcp-server-core';
+import { envConfig, SERVICE_NAME, SERVICE_VERSION, textContent } from '@reaatech/mcp-server-core';
 import { z } from 'zod';
 import { defineTool } from './registry.js';
 

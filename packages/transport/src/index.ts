@@ -1,3 +1,3 @@
-export { mountStreamableHTTP, clearAllSessions } from './streamable-http.js';
-export { mountSSE, clearAllSSESessions } from './sse.js';
 export { updateTransportSessionCount } from './session-metrics.js';
+export { clearAllSSESessions, mountSSE } from './sse.js';
+export { clearAllSessions, mountStreamableHTTP } from './streamable-http.js';

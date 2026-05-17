@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { APP_VERSION, SERVICE_NAME, envConfig, errorResponse, textContent } from './index.js';
+import { APP_VERSION, envConfig, errorResponse, SERVICE_NAME, textContent } from './index.js';
 
 describe('core', () => {
   it('exports textContent helper', () => {

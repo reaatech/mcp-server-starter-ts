@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { envConfig, isDevelopment } from '@reaatech/mcp-server-core';
 import type { RequestContext } from '@reaatech/mcp-server-core';
+import { envConfig, isDevelopment } from '@reaatech/mcp-server-core';
 import pino from 'pino';
 
 const REDACTED_FIELDS = [
@@ -124,11 +124,7 @@ export function logMiddlewareEvent(params: {
   }
 }
 
-export function safeLog(fields: {
-  event: string;
-  userId?: string;
-  [key: string]: unknown;
-}): void {
+export function safeLog(fields: { event: string; userId?: string; [key: string]: unknown }): void {
   const safeFields: Record<string, unknown> = { ...fields };
 
   if (fields.userId) {

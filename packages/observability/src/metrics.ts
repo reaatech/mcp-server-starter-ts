@@ -1,10 +1,9 @@
-import { ValueType, metrics } from '@opentelemetry/api';
 import type { Counter, Histogram, UpDownCounter } from '@opentelemetry/api';
+import { metrics, ValueType } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { Resource } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { envConfig } from '@reaatech/mcp-server-core';
-import { SERVICE_VERSION } from '@reaatech/mcp-server-core';
+import { envConfig, SERVICE_VERSION } from '@reaatech/mcp-server-core';
 import { logger } from './logger.js';
 
 let meterProvider: MeterProvider | undefined;

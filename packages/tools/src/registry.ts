@@ -1,6 +1,5 @@
 import { constants as fsConstants } from 'node:fs';
-import { readdir } from 'node:fs/promises';
-import { access } from 'node:fs/promises';
+import { access, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import type { ToolContext, ToolResponse } from '@reaatech/mcp-server-core';
 import { logger } from '@reaatech/mcp-server-observability';

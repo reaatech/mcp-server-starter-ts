@@ -3,8 +3,7 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { Resource } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { envConfig } from '@reaatech/mcp-server-core';
-import { SERVICE_VERSION } from '@reaatech/mcp-server-core';
+import { envConfig, SERVICE_VERSION } from '@reaatech/mcp-server-core';
 import { logger } from './logger.js';
 import { initMetrics } from './metrics.js';
 
