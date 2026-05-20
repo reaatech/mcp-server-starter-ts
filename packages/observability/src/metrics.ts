@@ -1,7 +1,7 @@
 import type { Counter, Histogram, UpDownCounter } from '@opentelemetry/api';
 import { metrics, ValueType } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { envConfig, SERVICE_VERSION } from '@reaatech/mcp-server-core';
 import { logger } from './logger.js';
@@ -29,7 +29,7 @@ export async function initMetrics(): Promise<void> {
     return;
   }
 
-  const resource = new Resource({
+  const resource = resourceFromAttributes({
     'service.name': envConfig.OTEL_SERVICE_NAME,
     'service.version': SERVICE_VERSION,
     'deployment.environment': envConfig.NODE_ENV,
