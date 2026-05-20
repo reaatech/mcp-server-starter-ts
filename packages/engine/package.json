@@ -45,7 +45,6 @@
     "@reaatech/mcp-server-transport": "workspace:*",
     "cors": "^2.8.5",
     "express": "^5.0.0",
-<<<<<<< HEAD
     "helmet": "^8.1.0",
     "zod": "^4.4.3"
   },
