@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-starter-e2e",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "End-to-end tests for the MCP server framework",
   "license": "MIT",
