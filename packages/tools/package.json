@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP tool registry, discovery, and built-in tools (echo, health-check)",
   "license": "MIT",
   "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",

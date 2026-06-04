@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-example-basic-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Example: minimal MCP server with full middleware pipeline and built-in tools",
   "license": "MIT",
