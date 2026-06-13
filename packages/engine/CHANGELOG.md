@@ -1,5 +1,12 @@
 # @reaatech/mcp-server-engine
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies:
+  - @reaatech/mcp-server-transport@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes

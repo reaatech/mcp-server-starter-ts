@@ -1,3 +1,16 @@
+export type {
+  DeleteResult,
+  RequestLogContext,
+  SessionStore,
+  StreamableSession,
+} from './core.js';
+export {
+  cleanupExpiredSessions,
+  handleStreamableHTTPDelete,
+  handleStreamableHTTPRequest,
+} from './core.js';
+export type { FastifyStreamableHTTPOptions } from './fastify.js';
+export { fastifyStreamableHTTP, mountStreamableHTTPFastify } from './fastify.js';
 export { updateTransportSessionCount } from './session-metrics.js';
-export { clearAllSSESessions, mountSSE } from './sse.js';
+export { cleanupExpiredSSESessions, clearAllSSESessions, mountSSE } from './sse.js';
 export { clearAllSessions, mountStreamableHTTP } from './streamable-http.js';

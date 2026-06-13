@@ -19,12 +19,16 @@ pnpm add @reaatech/mcp-server-transport
 ## Feature Overview
 
 - **Streamable HTTP transport** — Primary transport via `POST /mcp`, session-aware via `Mcp-Session-Id` header
-- **SSE transport** — Legacy transport via `GET /mcp/sse` + `POST /mcp/messages`
+- **Framework-agnostic core** — Session management + dispatch operate on raw Node `req`/`res`; thin adapters wrap your HTTP framework
+- **Express & Fastify adapters** — First-class support for both, sharing the same session store
+- **SSE transport** — Legacy transport via `GET /mcp/sse` + `POST /mcp/messages` (Express)
 - **Session lifecycle** — Creates, reuses, and cleans up MCP sessions per transport
 - **Automatic cleanup** — Periodic eviction of expired sessions based on `SESSION_TIMEOUT_MS`
 - **Transport metrics** — Records request counts and active session gauges via `@reaatech/mcp-server-observability`
 
 ## Quick Start
+
+### Express
 
 ```typescript
 import express from 'express';
@@ -44,6 +48,27 @@ mountSSE(app, serverFactory);
 
 app.listen(8080);
 ```
+
+### Fastify
+
+```typescript
+import Fastify from 'fastify';
+import { fastifyStreamableHTTP } from '@reaatech/mcp-server-transport';
+import { createMcpServer, getTools } from '@reaatech/mcp-server-engine';
+
+const app = Fastify();
+
+const serverFactory = () => createMcpServer(getTools());
+
+// Primary transport: StreamableHTTP (POST /mcp, DELETE /mcp)
+await app.register(fastifyStreamableHTTP, { serverFactory, path: '/mcp' });
+
+await app.listen({ port: 8080 });
+```
+
+Fastify's built-in JSON body parser handles `POST /mcp`; the plugin calls
+`reply.hijack()` and hands the raw socket to the transport so Fastify never tries
+to serialize or auto-close the (possibly long-lived SSE) response.
 
 ## API Reference
 
@@ -69,6 +94,42 @@ mountStreamableHTTP(app, () => createMcpServer(tools));
 - **New sessions**: Created when no `Mcp-Session-Id` header is present. Server manages a per-session `StreamableHTTPServerTransport` and `McpServer` instance.
 - **Session reuse**: Existing sessions are reused when a matching `Mcp-Session-Id` header is provided.
 - **Cleanup**: Sessions idle longer than `SESSION_TIMEOUT_MS` are automatically closed and removed.
+
+### `fastifyStreamableHTTP` (Fastify plugin)
+
+Mounts the Streamable HTTP transport on a Fastify application. Register it like any
+other plugin:
+
+```typescript
+import { fastifyStreamableHTTP } from '@reaatech/mcp-server-transport';
+
+await app.register(fastifyStreamableHTTP, {
+  serverFactory: () => createMcpServer(tools),
+  path: '/mcp',           // optional, defaults to '/mcp'
+  bodyLimit: 10 * 1024 * 1024, // optional, defaults to 10 MB
+});
+```
+
+A convenience wrapper `mountStreamableHTTPFastify(app, serverFactory, options?)` is
+also exported for parity with the Express API:
+
+```typescript
+import { mountStreamableHTTPFastify } from '@reaatech/mcp-server-transport';
+
+await mountStreamableHTTPFastify(app, () => createMcpServer(tools), { path: '/mcp' });
+```
+
+#### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `serverFactory` | _(required)_ | `() => McpServer` invoked once per new session |
+| `path` | `/mcp` | Path to mount `POST`/`DELETE` on |
+| `bodyLimit` | `10485760` (10 MB) | Max request body size for `POST {path}` |
+
+The endpoints, headers (`Mcp-Session-Id`), and session behavior are identical to
+the Express adapter — both share the same session store, so `clearAllSessions()`
+clears sessions created by either framework.
 
 ### `mountSSE(app, serverFactory)`
 
