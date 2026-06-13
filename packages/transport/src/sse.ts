@@ -25,7 +25,12 @@ const sseSessions = new Map<
   }
 >();
 
-function cleanupSSESessions(timeoutMs: number): void {
+/**
+ * Evict SSE sessions idle for longer than `timeoutMs` and update the
+ * active-session gauge. Invoked periodically by the cleanup interval; exported
+ * so the eviction logic can be unit-tested directly without faking timers.
+ */
+export function cleanupExpiredSSESessions(timeoutMs: number): void {
   const now = Date.now();
   for (const [sessionId, session] of sseSessions.entries()) {
     if (now - session.lastAccessedAt > timeoutMs) {
@@ -38,7 +43,7 @@ function cleanupSSESessions(timeoutMs: number): void {
 }
 
 const cleanupInterval = setInterval(
-  () => cleanupSSESessions(envConfig.SESSION_TIMEOUT_MS),
+  () => cleanupExpiredSSESessions(envConfig.SESSION_TIMEOUT_MS),
   5 * 60 * 1000,
 );
 cleanupInterval.unref?.();

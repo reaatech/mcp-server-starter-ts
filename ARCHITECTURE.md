@@ -150,6 +150,7 @@ Tools follow the `*.tool.ts` naming convention and are auto-discovered. The midd
 - **Custom tools** — Add `packages/tools/src/my-tool.tool.ts` with `defineTool()`; auto-discovered at startup
 - **Custom auth** — Implement your own Express middleware; plug in before `createApp()` or replace `authMiddleware`
 - **Custom middleware** — Add Express middleware in the pipeline via `createApp()` customization
+- **Alternate HTTP frameworks** — The `transport` package is framework-agnostic: a core operating on raw Node `req`/`res` plus thin adapters. Express (`mountStreamableHTTP`) and Fastify (`fastifyStreamableHTTP` plugin) ship in-box; add another framework by writing a small adapter over `handleStreamableHTTPRequest` / `handleStreamableHTTPDelete`
 - **New transports** — Implement transport mounting functions following the `mountStreamableHTTP` pattern
 - **New packages** — Add to `packages/` with the standard template; depends on `core` for shared types
 

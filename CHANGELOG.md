@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-13
+
+### Added
+- `@reaatech/mcp-server-transport`: framework-agnostic Streamable HTTP core plus first-class **Fastify** support via the `fastifyStreamableHTTP` plugin (and a `mountStreamableHTTPFastify` convenience wrapper). The plugin calls `reply.hijack()` and hands the raw socket to the SDK transport so Fastify never serializes or auto-closes JSON/SSE responses.
+- `@reaatech/mcp-server-transport`: exported framework-neutral handlers (`handleStreamableHTTPRequest`, `handleStreamableHTTPDelete`) for building custom adapters.
+
+### Changed
+- `@reaatech/mcp-server-transport`: refactored into a framework-agnostic core (raw Node `req`/`res` + parsed body + shared session store) with thin Express/Fastify adapters. The existing `mountStreamableHTTP(app, serverFactory)` Express API is unchanged and now delegates to the core; sessions are shared across adapters.
+- `@reaatech/mcp-server-transport`: relaxed `zod` from a hard `^4.4.3` dependency to an optional peer range `^3.23 || ^4`; `express` and `fastify` are now optional peer dependencies. Consumers are no longer forced onto zod 4.
+
 ## [1.0.0] - 2026-04-18
 
 ### Added

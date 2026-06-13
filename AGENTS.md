@@ -11,7 +11,7 @@ packages/
   core/          — Core MCP types, Zod schemas, configuration, version
   auth/          — Authentication middleware (API key, bearer token)
   observability/ — Structured logging, OpenTelemetry tracing, metrics
-  transport/     — MCP transport implementations (Streamable HTTP, SSE)
+  transport/     — Framework-agnostic MCP transports (Streamable HTTP, SSE); Express & Fastify adapters
   tools/         — Tool registry, discovery, and built-in tools
   engine/        — MCP server framework (Express, middleware pipeline)
 examples/

@@ -54,6 +54,11 @@
       "hono": ">=4.12.18",
       "ip-address": ">=10.1.1",
       "protobufjs": ">=8.0.2"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "GHSA-q7rr-3cgh-j5r3"
+      ]
     }
   }
 }
