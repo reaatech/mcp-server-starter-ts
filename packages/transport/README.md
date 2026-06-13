@@ -21,7 +21,7 @@ pnpm add @reaatech/mcp-server-transport
 - **Streamable HTTP transport** — Primary transport via `POST /mcp`, session-aware via `Mcp-Session-Id` header
 - **Framework-agnostic core** — Session management + dispatch operate on raw Node `req`/`res`; thin adapters wrap your HTTP framework
 - **Express & Fastify adapters** — First-class support for both, sharing the same session store
-- **SSE transport** — Legacy transport via `GET /mcp/sse` + `POST /mcp/messages` (Express)
+- **SSE transport** — Legacy transport via `GET /mcp/sse` + `POST /mcp/messages` (Express & Fastify)
 - **Session lifecycle** — Creates, reuses, and cleans up MCP sessions per transport
 - **Automatic cleanup** — Periodic eviction of expired sessions based on `SESSION_TIMEOUT_MS`
 - **Transport metrics** — Records request counts and active session gauges via `@reaatech/mcp-server-observability`
@@ -51,24 +51,64 @@ app.listen(8080);
 
 ### Fastify
 
+The Fastify adapters live on the `@reaatech/mcp-server-transport/fastify` subpath
+(matching the `@reaatech/mcp-gateway-*` packages' `./fastify` convention). They are
+also re-exported from the package root for convenience.
+
 ```typescript
 import Fastify from 'fastify';
-import { fastifyStreamableHTTP } from '@reaatech/mcp-server-transport';
+import fastifyStreamableHTTP, { fastifySSE } from '@reaatech/mcp-server-transport/fastify';
 import { createMcpServer, getTools } from '@reaatech/mcp-server-engine';
 
 const app = Fastify();
 
 const serverFactory = () => createMcpServer(getTools());
 
-// Primary transport: StreamableHTTP (POST /mcp, DELETE /mcp)
+// Primary transport: StreamableHTTP (POST /mcp, DELETE /mcp).
+// `fastifyStreamableHTTP` is exported as both the default and a named export.
 await app.register(fastifyStreamableHTTP, { serverFactory, path: '/mcp' });
+
+// Legacy transport: SSE (GET /mcp/sse, POST /mcp/messages)
+await app.register(fastifySSE, { serverFactory });
 
 await app.listen({ port: 8080 });
 ```
 
 Fastify's built-in JSON body parser handles `POST /mcp`; the plugin calls
 `reply.hijack()` and hands the raw socket to the transport so Fastify never tries
-to serialize or auto-close the (possibly long-lived SSE) response.
+to serialize or auto-close the (possibly long-lived SSE) response. Both Fastify and
+Express adapters share the same session store, so `clearAllSessions()` /
+`clearAllSSESessions()` clear sessions created by either framework.
+
+#### Composing with the `@reaatech/mcp-gateway-*` Fastify plugins
+
+The gateway plugins run as `onRequest` / `preHandler` hooks and decorate
+`request.authContext` / `request.tenantId`; this transport reads
+`request.requestContext` for structured logging and never sets or clobbers the
+gateway fields. Register the gateway plugins **before** the transport so tenant
+context is resolved before a request is handled:
+
+```typescript
+import Fastify from 'fastify';
+import { fastifyAuth } from '@reaatech/mcp-gateway-auth/fastify';
+import { fastifyRateLimit } from '@reaatech/mcp-gateway-rate-limit/fastify';
+import { fastifyAllowlist } from '@reaatech/mcp-gateway-allowlist/fastify';
+import { fastifyAudit } from '@reaatech/mcp-gateway-audit/fastify';
+import { fastifyCache } from '@reaatech/mcp-gateway-cache/fastify';
+import fastifyStreamableHTTP from '@reaatech/mcp-server-transport/fastify';
+
+const app = Fastify();
+
+// Gateway preHandlers, in order: auth → rate-limit → allowlist → audit → cache
+await app.register(fastifyAuth, { /* ... */ });
+await app.register(fastifyRateLimit, { /* ... */ });
+await app.register(fastifyAllowlist, { /* ... */ });
+await app.register(fastifyAudit, { /* ... */ });
+await app.register(fastifyCache, { /* ... */ });
+
+// …then the transport, which handles the request.
+await app.register(fastifyStreamableHTTP, { serverFactory });
+```
 
 ## API Reference
 
@@ -97,11 +137,12 @@ mountStreamableHTTP(app, () => createMcpServer(tools));
 
 ### `fastifyStreamableHTTP` (Fastify plugin)
 
-Mounts the Streamable HTTP transport on a Fastify application. Register it like any
-other plugin:
+Mounts the Streamable HTTP transport on a Fastify application. Import it from the
+`@reaatech/mcp-server-transport/fastify` subpath (it is the module's default export
+and is also available as a named export, and re-exported from the package root):
 
 ```typescript
-import { fastifyStreamableHTTP } from '@reaatech/mcp-server-transport';
+import fastifyStreamableHTTP from '@reaatech/mcp-server-transport/fastify';
 
 await app.register(fastifyStreamableHTTP, {
   serverFactory: () => createMcpServer(tools),
@@ -114,7 +155,7 @@ A convenience wrapper `mountStreamableHTTPFastify(app, serverFactory, options?)`
 also exported for parity with the Express API:
 
 ```typescript
-import { mountStreamableHTTPFastify } from '@reaatech/mcp-server-transport';
+import { mountStreamableHTTPFastify } from '@reaatech/mcp-server-transport/fastify';
 
 await mountStreamableHTTPFastify(app, () => createMcpServer(tools), { path: '/mcp' });
 ```
@@ -130,6 +171,35 @@ await mountStreamableHTTPFastify(app, () => createMcpServer(tools), { path: '/mc
 The endpoints, headers (`Mcp-Session-Id`), and session behavior are identical to
 the Express adapter — both share the same session store, so `clearAllSessions()`
 clears sessions created by either framework.
+
+### `fastifySSE` (Fastify plugin)
+
+Mounts the legacy SSE transport on a Fastify application, mirroring the Express
+`mountSSE`. Imported from the same `@reaatech/mcp-server-transport/fastify` subpath:
+
+```typescript
+import { fastifySSE } from '@reaatech/mcp-server-transport/fastify';
+
+await app.register(fastifySSE, {
+  serverFactory: () => createMcpServer(tools),
+  ssePath: '/mcp/sse',          // optional, defaults to '/mcp/sse'
+  messagesPath: '/mcp/messages', // optional, defaults to '/mcp/messages'
+  bodyLimit: 10 * 1024 * 1024,   // optional, defaults to 10 MB
+});
+```
+
+A convenience wrapper `mountSSEFastify(app, serverFactory, options?)` is also
+exported. Both routes call `reply.hijack()` and hand `reply.raw` to the SDK
+transport; the SSE session store is shared with the Express adapter.
+
+#### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `serverFactory` | _(required)_ | `() => McpServer` invoked once per new SSE session |
+| `ssePath` | `/mcp/sse` | Path that establishes the SSE stream |
+| `messagesPath` | `/mcp/messages` | Path clients post messages back to |
+| `bodyLimit` | `10485760` (10 MB) | Max request body size for `POST {messagesPath}` |
 
 ### `mountSSE(app, serverFactory)`
 
