@@ -1,5 +1,12 @@
 # @reaatech/mcp-server-engine
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`e6dded8`](https://github.com/reaatech/mcp-server-starter-ts/commit/e6dded8cd5833c28ba8e7a1586de49e158210bf9)]:
+  - @reaatech/mcp-server-transport@1.2.0
+
 ## 1.0.2
 
 ### Patch Changes
