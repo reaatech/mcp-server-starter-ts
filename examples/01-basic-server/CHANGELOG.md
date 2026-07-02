@@ -1,5 +1,14 @@
 # @reaatech/mcp-server-example-basic-server
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [e0ffe61]
+- Updated dependencies [61af2f6]
+  - @reaatech/mcp-server-core@1.1.0
+  - @reaatech/mcp-server-engine@1.0.4
+
 ## 1.0.3
 
 ### Patch Changes

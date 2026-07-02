@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-auth",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Pluggable authentication middleware for MCP servers",
   "license": "MIT",
   "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",

@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-transport",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP transport implementations (Streamable HTTP, SSE) with session management",
   "license": "MIT",
   "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",

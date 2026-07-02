@@ -1,5 +1,14 @@
 # @reaatech/mcp-server-transport
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [e0ffe61]
+- Updated dependencies [61af2f6]
+  - @reaatech/mcp-server-core@1.1.0
+  - @reaatech/mcp-server-observability@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes
