@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-observability",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Structured logging, tracing, and metrics for MCP servers",
   "license": "MIT",
   "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",

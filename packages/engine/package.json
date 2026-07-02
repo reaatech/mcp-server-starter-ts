@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/mcp-server-engine",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MCP server framework with Express, middleware pipeline, and tool orchestration",
   "license": "MIT",
   "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
